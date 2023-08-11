@@ -1,0 +1,48 @@
+var arrCode = ["1.001731.000.00.00.H48",
+"1.001699.000.00.00.H48",
+"1.001731.000.00.00.H48",
+"1.001653.000.00.00.H48",
+"2.000751.000.00.00.H48",
+"1.001758.000.00.00.H48",
+"1.001753.000.00.00.H48",
+"1.001739.000.00.00.H48",
+"2.000286.000.00.00.H48"];
+var procedureList = db.getSiblingDB("qnisvcBasepad").getCollection("procedure").find({"code" : {$in : arrCode}});
+procedureList.forEach(function(itemProcedure){
+var procedureProcessList =  db.getSiblingDB("qnisvcBasepad").getCollection("procedureProcessDefinition").find({"procedure.id" : itemProcedure._id});
+//var mangArrId = [];
+procedureProcessList.forEach(function(itemProcedure1){
+    if(itemProcedure._id.equals(itemProcedure1.procedure.id)){
+        
+        if(!itemProcedure.sector.id.equals(itemProcedure1.procedure.sector.id)){
+//            db.getSiblingDB("qnisvcBasepad").getCollection("procedureProcessDefinition").find({"procedure.id" : itemProcedure1._id})
+            print(itemProcedure1._id);
+//            mangArrId.push(itemProcedure1._id);
+//            print(itemProcedure.code)
+//            print("1",itemProcedure.sector.id)
+//            print("1",itemProcedure.sector.name[0].name)
+//            print("2",itemProcedure1.procedure.sector.id);
+//            print("2",itemProcedure1.procedure.sector.name[0].name);
+            const filter2 = {  "_id" : itemProcedure1._id };
+            const update = {
+              $set: {
+                "procedure.sector" : {
+                      "id" : itemProcedure.sector.id, 
+                      "code" : itemProcedure.sector.code, 
+                      "name" : itemProcedure.sector.name
+                 }
+              }
+            };
+            db.getSiblingDB('qnisvcBasepad').getCollection("procedureProcessDefinition").updateOne(filter2, update);
+            print("--update end--")
+        }
+
+    }
+
+
+})
+//print(mangArrId)
+//mangArrId
+//db.getSiblingDB("qnisvcBasepad").getCollection("procedureProcessDefinition").find({"_id" : { $in : mangArrId } })
+
+})
